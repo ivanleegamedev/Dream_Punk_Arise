@@ -17,6 +17,12 @@ public class SportsCarController : MonoBehaviour
     public WheelCollider[] wheelColliders = new WheelCollider[4];
     public Transform[] wheelTransforms = new Transform[4];
 
+    [Header("Speed Boost Settings")]
+    public float boostMultiplier = 20.0f;
+    public float boostDuration = 5.0f;
+    private bool isBoosting = false;
+    private float boostEndTime;
+
     private float steerInput;
     private float gasInput;
     private float currentSpeed;
@@ -33,6 +39,11 @@ public class SportsCarController : MonoBehaviour
         HandleMovement();
         HandleSteering();
         UpdateWheelPoses();
+
+        if (isBoosting && Time.time > boostEndTime)
+        {
+            isBoosting = false;
+        }
     }
 
     public void SetSteerInput(float value)
@@ -66,7 +77,7 @@ public class SportsCarController : MonoBehaviour
     private void HandleGroundedMovement()
     {
         bool isReversing = gasInput < 0;
-        float targetTorque = gasInput * motorForce;
+        float targetTorque = gasInput * motorForce * (isBoosting && Time.time < boostEndTime ? boostMultiplier : 1);
 
         if (isReversing && currentSpeed > 5f)
         {
@@ -116,6 +127,13 @@ public class SportsCarController : MonoBehaviour
         wheelColliders[1].steerAngle = currentSteerAngle;
     }
 
+    public void ActivateSpeedBoost()
+    {
+        isBoosting = true;
+        boostEndTime = Time.time + boostDuration;
+    }
+
+    #region Wheel Visual Effects
     private void UpdateWheelPoses()
     {
         for (int i = 0; i < wheelColliders.Length; i++)
@@ -132,4 +150,5 @@ public class SportsCarController : MonoBehaviour
         transform.position = pos;
         transform.rotation = quat;
     }
+    #endregion
 }

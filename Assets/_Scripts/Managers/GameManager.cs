@@ -14,7 +14,6 @@ public enum GameState
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private SphereController sc;
     [SerializeField] private MenuManager mm;
 
     [SerializeField] public int currentLap = 0;
@@ -81,7 +80,6 @@ public class GameManager : Singleton<GameManager>
         }
         else if (scene.name == "PlayScene")
         {
-            sc = FindObjectOfType<SphereController>();
             mm = FindObjectOfType<MenuManager>();
 
             ChangeGameState(GameState.PLAY);
